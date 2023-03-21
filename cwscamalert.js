@@ -28,7 +28,7 @@
         bodyElem.insertBefore(warningDiv, bodyElem.firstChild);
 
         const cautionImg = document.createElement('img');
-        cautionImg.src = 'https://www.clipartkey.com/mpngs/m/14-144701_caution-png-transparent-images-warning-sign-png.png';
+        cautionImg.src = 'https://em-content.zobj.net/thumbs/120/apple/325/warning_26a0-fe0f.png';
         cautionImg.style.position = 'fixed';
         cautionImg.style.bottom = '10px';
         cautionImg.style.right = '10px';
