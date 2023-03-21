@@ -8,7 +8,7 @@
 // ==/UserScript==
 
 (async function() {
-    const response = await fetch('https://example.com/scam-links.txt');
+    const response = await fetch('https://raw.githubusercontent.com/biden2020prez/ConnectWise-Scam-Blocker/main/connectwisescammerlinks.txt');
     const scamLinks = await response.text().then(text => text.split('\n'));
 
     const currentUrl = window.location.href;
@@ -23,7 +23,7 @@
         warningDiv.style.color = 'white';
         warningDiv.style.fontSize = '20px';
         warningDiv.style.padding = '10px';
-        warningDiv.innerHTML = '<strong>WARNING:</strong> This website may be part of a ConnectWise scam. Use caution!';
+        warningDiv.innerHTML = '<strong>WARNING:</strong> This website is part of a ConnectWise scam. Use caution!';
         const bodyElem = document.querySelector('body');
         bodyElem.insertBefore(warningDiv, bodyElem.firstChild);
 
