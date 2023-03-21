@@ -1,39 +1,54 @@
 // ==UserScript==
 // @name         ConnectWise Scam Warning
-// @namespace    http://tampermonkey.net/
+// @namespace    https://example.com/
 // @version      1
-// @description  Warns if the link matches any from a specific online file, then shows a popup saying "This is a dangerous ConnectWise scam, use caution!" and adds a caution symbol and warning on top of the page.
+// @description  Warns users about ConnectWise scam websites
 // @match        *://*/*
-// @grant GM_xmlhttpRequest
+// @grant        GM_notification
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(async function() {
-    const response = await fetch('https://raw.githubusercontent.com/biden2020prez/ConnectWise-Scam-Blocker/main/connectwisescammerlinks.txt');
-    const scamLinks = await response.text().then(text => text.split('\n'));
+const scamUrlsUrl = "https://raw.githubusercontent.com/biden2020prez/ConnectWise-Scam-Blocker/main/connectwisescammerlinks.txt" // replace with your URL
+let scamWebsites = [];
 
-    const currentUrl = window.location.href;
-    if (scamLinks.some(link => currentUrl.includes(link))) {
-        alert("This is a dangerous ConnectWise scam, use caution!");
-        addWarning();
+GM_xmlhttpRequest({
+  method: "GET",
+  url: scamUrlsUrl,
+  onload: function(response) {
+    if (response.status === 200) {
+      scamWebsites = response.responseText.split("\n").filter(Boolean);
+      checkScamWebsite();
+    } else {
+      console.error(`Failed to retrieve scam website list. Error code: ${response.status}`);
     }
+  },
+  onerror: function(error) {
+    console.error(`Failed to retrieve scam website list. Error message: ${error.message}`);
+  }
+});
 
-    function addWarning() {
-        const warningDiv = document.createElement('div');
-        warningDiv.style.backgroundColor = 'red';
-        warningDiv.style.color = 'white';
-        warningDiv.style.fontSize = '20px';
-        warningDiv.style.padding = '10px';
-        warningDiv.innerHTML = '<strong>WARNING:</strong> This website is part of a ConnectWise scam. Use caution!';
-        const bodyElem = document.querySelector('body');
-        bodyElem.insertBefore(warningDiv, bodyElem.firstChild);
+function checkScamWebsite() {
+  const currentUrl = window.location.href;
+  if (scamWebsites.includes(currentUrl)) {
+    const warningText = "Watch out! This is a dangerous ConnectWise Scam";
+    const warningElement = document.createElement("div");
+    warningElement.style.position = "fixed";
+    warningElement.style.backgroundColor = "#ff6961";
+    warningElement.style.color = "#fff";
+    warningElement.style.fontSize = "14px";
+    warningElement.style.fontWeight = "bold";
+    warningElement.style.padding = "5px";
+    warningElement.style.borderRadius = "3px";
+    warningElement.style.top = "0";
+    warningElement.style.left = "0";
+    warningElement.style.right = "0";
+    warningElement.style.zIndex = "9999";
+    warningElement.innerHTML = `<div style="text-align:center;"><span style="font-size: 36px;">⚠️</span> <br>${warningText}</div>`;
 
-        const cautionImg = document.createElement('img');
-        cautionImg.src = 'https://em-content.zobj.net/thumbs/120/apple/325/warning_26a0-fe0f.png';
-        cautionImg.style.position = 'fixed';
-        cautionImg.style.bottom = '10px';
-        cautionImg.style.right = '10px';
-        cautionImg.style.width = '100px';
-        cautionImg.style.height = '100px';
-        document.body.appendChild(cautionImg);
-    }
-})();
+    document.body.appendChild(warningElement);
+
+
+
+  alert("This is a ConnectWise Scam website! Be careful!");
+  }
+}
